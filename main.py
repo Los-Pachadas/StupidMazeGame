@@ -1,4 +1,6 @@
 import turtle
+from threading import Timer
+import random
 
 # Create the window
 win = turtle.Screen()
@@ -55,20 +57,20 @@ levels = [""]
 #Level 1
 level1 = [
 "XXXXXXXXXXXXXXXXXXXXXXXX", 
-"XP XXX            XXXXXX", 
-"XXXXXXXXXX XXXXXX XXXXXX",
-"XXXXXXXXXX XXXXXX XXXXXX",
+"XP                XXXXXX", 
+"XXXXX XXXX XXXXXX XXXXXX",
+"XXXXX XXXX XXXXXX XXXXXX",
 "XXXXXXXX   XXXX     XXXX",
-"XXXXXXXXXXXXXXXXX XXXXXX",
-"XXXXXXXXXXXXXXXXX XXXXXX",
-"XXXXXXXXXXXXXXXXX XXXXXX", 
-"XXXXXXXXXXXXXXXXX XXXXXX", 
-"XXXXXXXXXXXXXXXXX XXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX", 
-"XXXXXXXXXXXXXXXXXXXXXXXX", 
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXX XXXXXXX XXXXXX",
+"XXXXXXXXX XXXXXXX XXXXXX",
+"XXXXXXXXX XXXXXXX XXXXXX", 
+"XXXXXXXXX XXXXXXX XXXXXX", 
+"XXXXXXXXX XXXXXXX XXXXXX",
+"XXXXX XXX XXXXXXXXXXXXXX", 
+"XXXXX XXX XXXXXXXXXXXXXX", 
+"XXXXX XXX XXXXXXXXXXXXXX",
+"XXXXX XXX XXXXXXXXXXXXXX",
+"XXXXX    XXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXX", 
@@ -127,6 +129,33 @@ turtle.onkey(player.goUp, "Up")
 # Turn off screen updates?
 win.tracer(0)
 
+
+
+# List of modes
+norm = ("Left", "Right", "Up", "Down")
+vim = ("h","l","j","k" )
+letters = ("l","r","u","d")
+inverse = ("Right", "Left", "Down", "Up")
+
+modes = []
+modes.append(norm)
+modes.append(vim)
+modes.append(letters)
+modes.append(inverse)
+
+def changeMode():
+    rand = random.randint(0,3)
+    selectMode = modes[rand]
+    turtle.onkey(player.goLeft, selectMode[0])
+    turtle.onkey(player.goRight, selectMode[1])
+    turtle.onkey(player.goDown, selectMode[2])
+    turtle.onkey(player.goUp, selectMode[3])
+count = 0 
 # Main game loop
 while True:
+    count += 1
+    print(count)
+    if (count > 1000):
+        changeMode()
+        print("It changed")
     win.update()

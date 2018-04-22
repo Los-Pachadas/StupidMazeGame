@@ -1,7 +1,8 @@
 import turtle
 from threading import Timer
 import random
-
+import time
+random.seed(time.time())
 # Create the window
 win = turtle.Screen()
 win.bgcolor("black")
@@ -23,31 +24,44 @@ class Pen(turtle.Turtle):
 
 # Create the Player class which is a child of Turtle class
 class Player(turtle.Turtle):
-    def __init__(self):
+    def __init__(self, color):
         # initialize the parent class
         turtle.Turtle.__init__(self)
         self.shape("circle")
-        self.color("red")
+        self.color(color)
         self.penup()
         self.speed(0)
 
     # Player has 4 directions to go: up, down, left, right
     def goUp(self):
+        global winner
         if ((self.xcor(), self.ycor() + 24) not in walls):
             self.goto(self.xcor(), self.ycor() + 24)
 
+        if ((self.xcor(), self.ycor() + 24) ==  winner):
+            print("YOU WIN, Im a lazy shit who didn't want to put this on the actual screen")
+        
     def goDown(self):
+        global winner
         if ((self.xcor(), self.ycor() - 24) not in walls):
             self.goto(self.xcor(), self.ycor() - 24)
+        if ((self.xcor(), self.ycor() - 24) ==  winner):
+            print("YOU WIN, Im a lazy shit who didn't want to put this on the actual screen")
 
     def goLeft(self):
+        global winner
         if ((self.xcor()-24, self.ycor()) not in walls):
             self.goto(self.xcor()-24, self.ycor())
 
+        if ((self.xcor() -24, self.ycor()) ==  winner):
+            print("YOU WIN, Im a lazy shit who didn't want to put this on the actual screen")
     def goRight(self):
+        global winner
         if ((self.xcor()+24, self.ycor()) not in walls):
             self.goto(self.xcor()+24, self.ycor())
 
+        if ((self.xcor()+24, self.ycor()) ==  winner):
+            print("YOU WIN, Im a lazy shit who didn't want to put this on the actual screen")
 
 
 # Create levels
@@ -61,31 +75,32 @@ level1 = [
 "XXXXX XXXX XXXXXX XXXXXX",
 "XXXXX XXXX XXXXXX XXXXXX",
 "XXXXXXXX   XXXX     XXXX",
-"XXXXXXXXX XXXXXXX XXXXXX",
-"XXXXXXXXX XXXXXXX XXXXXX",
-"XXXXXXXXX XXXXXXX XXXXXX", 
-"XXXXXXXXX XXXXXXX XXXXXX", 
-"XXXXXXXXX XXXXXXX XXXXXX",
-"XXXXX XXX XXXXXXXXXXXXXX", 
-"XXXXX XXX XXXXXXXXXXXXXX", 
-"XXXXX XXX XXXXXXXXXXXXXX",
-"XXXXX XXX XXXXXXXXXXXXXX",
-"XXXXX    XXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX", 
-"XXXXXXXXXXXXXXXXXXXXXXXX", 
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXX XXX XXX    XXX",
+"XXXXXXXXX XXX XXX XX XXX",
+"XXXXXXXXX XXX     XX XXX", 
+"XX        XXXXXXX XX XXX", 
+"XX XXXXXX XXXXXXX XX XXX",
+"XX XX XXX XXXXXXXXXX XXX", 
+"XX XX XXX XXXXXXXXXX XXX", 
+"XX XX XXX     XXXXXX XXX",
+"XX XX XXX XXX X      XXX",
+"XX       XXXX X   XXX XX",
+"XX XXXXXXXXXX XXXXXXX XX",
+"XX XXXXXX         XXX XX",
+"XX X   XX XXXXXXX     XX", 
+"XX   X XX XXXXXXX XXXXXX", 
+"XXXXXX XX     XXX XXXXXX",
+"X   XX XX  XX XXX XXXXXX",
+"XXX XX XXXXXX XXX XXXXXX",
+"XXX XX XXXX   XXX   XXXX",
+"XXX     XXXX XXXXXXWXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXX"
 ]
 
 
 # Append each level to the levels list
 levels.append(level1)
+winner = (0, 0)
 
 # Function to set up the maze
 # Loops through all rows and columns to set up maze
@@ -108,10 +123,15 @@ def setupMaze(level):
             # If the character is a P, the player should go here.
             if character == "P":
                 player.goto(screen_x, screen_y)
+            if character == "W":
+                global winner
+                winner = (screen_x, screen_y)
+                end.goto((screen_x, screen_y))
 
 # Create objects
 pen = Pen()
-player = Player()
+player = Player("Red")
+end = Player("White")
 
 # Create list with all the wall coordinates with the screen coordinates
 walls = []
@@ -136,26 +156,68 @@ norm = ("Left", "Right", "Up", "Down")
 vim = ("h","l","j","k" )
 letters = ("l","r","u","d")
 inverse = ("Right", "Left", "Down", "Up")
+asdw = ("a", "d", "w", "s")
+dwsa = ("d", "a", "s", "w")
+nums = ("1", "2", "3", "4")
+pi = ("3", "1", "4", "5")
 
 modes = []
 modes.append(norm)
 modes.append(vim)
 modes.append(letters)
 modes.append(inverse)
+modes.append(asdw)
+modes.append(dwsa)
+modes.append(nums)
+modes.append(pi)
+
+tags = []
+tags.append("Norm")
+tags.append("Vim")
+tags.append("First Letter")
+tags.append("Inverse")
+tags.append("Gamer")
+tags.append("Drunk Gamer")
+tags.append("Numbers")
+tags.append("Pie")
+
+
+resetKeys = 0
+
+def nothing():
+    pass
 
 def changeMode():
-    rand = random.randint(0,3)
+    turtle.clear()
+    global resetKeys
+    rand = random.randint(0,7)
+    selectMode = modes[resetKeys]
+    turtle.onkey(nothing, selectMode[0])
+    turtle.onkey(nothing, selectMode[1])
+    turtle.onkey(nothing, selectMode[2])
+    turtle.onkey(nothing, selectMode[3])
     selectMode = modes[rand]
+    resetKeys = rand
     turtle.onkey(player.goLeft, selectMode[0])
     turtle.onkey(player.goRight, selectMode[1])
-    turtle.onkey(player.goDown, selectMode[2])
-    turtle.onkey(player.goUp, selectMode[3])
+    turtle.onkey(player.goUp, selectMode[2])
+    turtle.onkey(player.goDown, selectMode[3])
+    modeStr = tags[rand]
+    print("Mode changed to %s" % modeStr)
+    turtle.write("Mode changed to %s" % modeStr, True, align="center",font=("Arial", 15, "normal"))
+
+turtle.penup()
+turtle.setx(-288)
+turtle.sety(298)
+turtle.pendown()
+turtle.pencolor("red")
 count = 0 
+timer = 1000
 # Main game loop
 while True:
     count += 1
-    print(count)
-    if (count > 1000):
+    if (count > timer):
         changeMode()
-        print("It changed")
+        count = 0
+        timer -= 50
     win.update()

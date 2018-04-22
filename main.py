@@ -10,6 +10,7 @@ win.setup(700, 700)
 class Pen(turtle.Turtle):
     #constructor
     def __init__(self):
+        # initialize the parent class
         turtle.Turtle.__init__(self)
         self.shape("square")
         self.color("white")
@@ -18,6 +19,35 @@ class Pen(turtle.Turtle):
         # the speed of the animation
         self.speed(0)
 
+# Create the Player class which is a child of Turtle class
+class Player(turtle.Turtle):
+    def __init__(self):
+        # initialize the parent class
+        turtle.Turtle.__init__(self)
+        self.shape("circle")
+        self.color("red")
+        self.penup()
+        self.speed(0)
+
+    # Player has 4 directions to go: up, down, left, right
+    def goUp(self):
+        if ((self.xcor(), self.ycor() + 24) not in walls):
+            self.goto(self.xcor(), self.ycor() + 24)
+
+    def goDown(self):
+        if ((self.xcor(), self.ycor() - 24) not in walls):
+            self.goto(self.xcor(), self.ycor() - 24)
+
+    def goLeft(self):
+        if ((self.xcor()-24, self.ycor()) not in walls):
+            self.goto(self.xcor()-24, self.ycor())
+
+    def goRight(self):
+        if ((self.xcor()+24, self.ycor()) not in walls):
+            self.goto(self.xcor()+24, self.ycor())
+
+
+
 # Create levels
 # start level list empty to start level 1 at 1
 levels = [""]
@@ -25,7 +55,7 @@ levels = [""]
 #Level 1
 level1 = [
 "XXXXXXXXXXXXXXXXXXXXXXXX", 
-"X  XXX            XXXXXX", 
+"XP XXX            XXXXXX", 
 "XXXXXXXXXX XXXXXX XXXXXX",
 "XXXXXXXXXX XXXXXX XXXXXX",
 "XXXXXXXX   XXXX     XXXX",
@@ -71,13 +101,32 @@ def setupMaze(level):
             if character == "X":
                 pen.goto(screen_x, screen_y)
                 pen.stamp()
+                walls.append((screen_x, screen_y)) 
+
+            # If the character is a P, the player should go here.
+            if character == "P":
+                player.goto(screen_x, screen_y)
 
 # Create objects
 pen = Pen()
+player = Player()
+
+# Create list with all the wall coordinates with the screen coordinates
+walls = []
 
 # Set up the level
 setupMaze(levels[1])
 
+# Keyboard Binding
+turtle.listen()
+turtle.onkey(player.goLeft, "Left")
+turtle.onkey(player.goRight, "Right")
+turtle.onkey(player.goDown, "Down")
+turtle.onkey(player.goUp, "Up")
+
+# Turn off screen updates?
+win.tracer(0)
+
 # Main game loop
 while True:
-    pass
+    win.update()

@@ -1,0 +1,2 @@
+# StupidMazeGame
+Self-explanatory 
